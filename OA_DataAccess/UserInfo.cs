@@ -48,6 +48,7 @@ namespace OA_DataAccess
         [StringLength(maximumLength: 200, ErrorMessage = "{0} length is between {2} and {1}", MinimumLength = 1)]
         public string? PostDetails { get; set; }
         public int ReactionCount { get; set; }
+        public DateTime PostDate { get; set; }=DateTime.Now;
 
         //Foreign Key
         [ForeignKey("UserId")]
