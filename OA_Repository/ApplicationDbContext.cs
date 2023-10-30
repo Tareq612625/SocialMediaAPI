@@ -20,5 +20,6 @@ namespace OA_Repository
         public DbSet<UserPost> UserPost { get; set; }
         public DbSet<UserPostContent> UserPostContent { get; set; }
         public DbSet<UserFollowers> UserFollowers { get; set; }
+        public DbSet<TblRefreshtoken> TblRefreshtoken { get; set; }
     }
 }

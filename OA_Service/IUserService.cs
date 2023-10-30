@@ -9,6 +9,8 @@ namespace OA_Service
 {
     public interface IUserService
     {
+        TblRefreshtoken TokenCheck(string UserId, string RefreshToken);
+        string GenerateToken(string username);
         IEnumerable<UserInfo>  GetAll();
         UserInfo GetById(string Id);
         void Insert(UserInfo entity);

@@ -1,7 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Identity.Client;
+using Microsoft.IdentityModel.Tokens;
 using OA_DataAccess;
 using OA_Repository;
 using OA_Service;
@@ -16,13 +18,36 @@ namespace OA_API
             {
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
             });
-            #region Service Injected
-                services.AddScoped(typeof(IRepository< >), typeof(Repository< >));
-                services.AddScoped<IProductService, ProductService>();
-                services.AddScoped<IUserPostService, UserPostService>();
-                services.AddScoped<IUserService, UserService>();
-                services.AddScoped<IUserFollowerService, UserFollowerService>();
-            #endregion
+
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IUserPostService, UserPostService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IUserFollowerService, UserFollowerService>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddJWTServices(this IServiceCollection services, IConfiguration configuration)
+        {
+            var jwtSettings = configuration.GetSection("JwtSettings").Get<JwtSettings>();
+            var securityKey = jwtSettings.securitykey;
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.RequireHttpsMetadata = true;
+                    options.SaveToken = true;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityKey)),
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                        ClockSkew = TimeSpan.Zero
+                    };
+                });
+
             return services;
         }
     }
